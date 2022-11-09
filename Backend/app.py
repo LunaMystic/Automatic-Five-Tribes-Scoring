@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify, flash
+from scorer import score
 import numpy as np
 import cv2
 
@@ -20,8 +21,7 @@ def users():
             return jsonify({ 'error': 'User image not specified'})
     if image:
         image_stream = np.fromstring(image.stream.read(), np.uint8)
-        img_cv = cv2.imdecode(image_stream, cv2.IMREAD_COLOR)
-    print(image.filename, img_cv.shape)
+        print(score(image_stream))
     return jsonify({ 
         'score': 100,
         'color': milk
