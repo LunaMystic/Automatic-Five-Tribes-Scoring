@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify, flash
-from scorer import score
+from score_manager import score
 import numpy as np
 import cv2
 
