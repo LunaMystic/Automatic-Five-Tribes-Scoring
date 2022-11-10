@@ -5,7 +5,7 @@ from matching import multiple_match
 
 
 def score(image_stream):
-    img_cv = cv2.imdecode(image_stream, cv2.IMREAD_COLOR)
+    img_cv = cv2.cvtColor(cv2.imdecode(image_stream, cv2.IMREAD_COLOR), cv2.COLOR_BGR2GRAY)
     score_sheet = ScoreSheet("yellow")
     score = score_helper(score_sheet, img_cv)
     return score
