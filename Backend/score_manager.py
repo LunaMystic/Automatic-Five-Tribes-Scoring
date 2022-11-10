@@ -1,13 +1,24 @@
 import cv2
 import resources
+from score_utils import ScoreSheet
 from matching import multiple_match
+
 
 def score(image_stream):
     img_cv = cv2.imdecode(image_stream, cv2.IMREAD_COLOR)
+    score_sheet = ScoreSheet("yellow")
+    score_helper(score_sheet, img_cv)
     return img_cv.shape
 
+
+def score_helper(sheet, image):
+    # Very boring detection of various merchandise
+    for item in resources.ALL_MERCHANDISE:
+        current_merc = len(multiple_match(item[0], image))
+        if current_merc:
+            sheet.merManager.inventory[item[1]] = current_merc
+            print("Detecting ", current_merc, " ", item[1], " in Image")
+    sheet.merManager.calculateScore()
+
 if __name__ == "__main__":
-    print(len(multiple_match(resources.SPICE[0], resources.TEST_RESULT)))
-    dict = {"m":1, "k":2}
-    dict = {k: v-1 for k, v in dict.items() if v-1}
-    print(dict)
+    score_helper(ScoreSheet("yellow"), resources.TEST_TARGET)

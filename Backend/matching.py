@@ -16,7 +16,7 @@ def remove_duplicate(coords_zip, threshold):
     for (x, y) in coords_zip:
         flag = True
         for (cx, cy) in coords_dict:
-            if np.linalg.norm(np.array(x, y) - np.array(cx, cy)) < threshold:
+            if np.linalg.norm(np.array((x, y)) - np.array((cx, cy))) < threshold:
                 flag = False
         if flag:
             coords_dict.add((x, y))

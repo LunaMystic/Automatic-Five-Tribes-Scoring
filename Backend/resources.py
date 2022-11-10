@@ -11,4 +11,6 @@ SILK = (cv2.cvtColor(cv2.imread(datadir + 'merchandise/silk.jpg'), cv2.COLOR_BGR
 SPICE = (cv2.cvtColor(cv2.imread(datadir + 'merchandise/spice.jpg'), cv2.COLOR_BGR2GRAY), "spice")
 WHEAT = (cv2.cvtColor(cv2.imread(datadir + 'merchandise/wheat.jpg'), cv2.COLOR_BGR2GRAY), "wheat")
 
-TEST_RESULT = cv2.cvtColor(cv2.imread(datadir + 'result_img.jpg'), cv2.COLOR_BGR2GRAY)
+ALL_MERCHANDISE = [FISH, GOLD, IVORY, JEWEL, PAPYRUS, POTTERY, SILK, SPICE, WHEAT]
+
+TEST_TARGET = cv2.cvtColor(cv2.imread(datadir + 'result_img.jpg'), cv2.COLOR_BGR2GRAY)
