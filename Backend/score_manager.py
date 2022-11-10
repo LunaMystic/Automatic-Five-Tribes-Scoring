@@ -7,8 +7,8 @@ from matching import multiple_match
 def score(image_stream):
     img_cv = cv2.imdecode(image_stream, cv2.IMREAD_COLOR)
     score_sheet = ScoreSheet("yellow")
-    score_helper(score_sheet, img_cv)
-    return img_cv.shape
+    score = score_helper(score_sheet, img_cv)
+    return score
 
 
 def score_helper(sheet, image):
@@ -18,7 +18,8 @@ def score_helper(sheet, image):
         if current_merc:
             sheet.merManager.inventory[item[1]] = current_merc
             print("Detecting ", current_merc, " ", item[1], " in Image")
-    sheet.merManager.calculateScore()
+    score = sheet.merManager.calculateScore()
+    return score
 
 if __name__ == "__main__":
     score_helper(ScoreSheet("yellow"), resources.TEST_TARGET)

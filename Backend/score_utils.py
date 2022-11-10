@@ -13,6 +13,6 @@ class MerchandiseManager:
         while len(temp_inventory):
             if detailFlag:
                 print("Set Contains ", len(temp_inventory), " merchandises, Score: ",SALES_RATE[len(temp_inventory)])
-            score += len(temp_inventory)
+            score += SALES_RATE[len(temp_inventory)]
             temp_inventory = {key: value-1 for key, value in temp_inventory.items() if value-1}
         return score
