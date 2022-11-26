@@ -64,13 +64,57 @@ def find_connected_components(grid_list):
 
     return final_dic, merge_list
 
+def calculate_merchandise_match_centroids(template_img, target_img, 
+    grid_size=100, voting_threshold=2, cluster_threshold=3):
+    """
+    " Calculate centroids of all matches merchandises 
+    " arg template_color:
+    """
+    H, W = target_img.shape
 
+    sift = cv2.SIFT_create()
+    _, des_template = sift.detectAndCompute(template_img, None)
+    kp_target, des_target = sift.detectAndCompute(target_img, None)
+
+    bf_matcher = cv2.BFMatcher(cv2.NORM_L2, crossCheck=True)
+
+    matches = bf_matcher.match(des_template, des_target)
+
+    matches = sorted(matches, key=lambda x: x.distance)
+
+    trainIdx_list = []
+    col_grid = W // grid_size + 1
+    row_grid = H // grid_size + 1
+    voting_grid = np.zeros((col_grid, row_grid))
+
+    for match in matches:
+        trainIdx_list.append([kp_target[match.trainIdx].pt[0], kp_target[match.trainIdx].pt[1]])
+        voting_grid[int(kp_target[match.trainIdx].pt[0] // grid_size)][
+            int(kp_target[match.trainIdx].pt[1] // grid_size)] += 1
+
+    sorted_kp = np.argsort(voting_grid, axis=None)
+    voting_above_threshold = np.argwhere(voting_grid >= voting_threshold)
+    kp_dic, merge_list = find_connected_components(voting_above_threshold)
+
+    detected_list = []
+
+    for i in range(len(kp_dic)):
+        if len(kp_dic[i]) < cluster_threshold:
+            continue
+        clustered_pts = kp_dic[i]
+        cluster_center = np.mean(clustered_pts, axis=0)
+        detected_list.append(cluster_center)
+
+    detected_list = np.array(detected_list) + 0.5
+
+    return detected_list
+    
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--template_img_name", type=str, default='./data/merchandise/fish.jpg',
+    parser.add_argument("--template_img_name", type=str, default='./resources/merchandise/ivory.jpg',
                         help='specify name of the template input image')
-    parser.add_argument("--target_img_name", type=str, default='./data/result_rotated.jpg',
+    parser.add_argument("--target_img_name", type=str, default='./resources/result_mod.jpg',
                         help='specify name of the target input image')
     parser.add_argument("--voting_threshold", type=int, default=2,
                         help='threshold for a valid voting grid')
@@ -86,53 +130,14 @@ if __name__ == "__main__":
     template_img = cv2.cvtColor(template_color, cv2.COLOR_BGR2GRAY)
     target_img = cv2.cvtColor(target_color, cv2.COLOR_BGR2GRAY)
 
-    H, W = target_img.shape
+    detected_list = calculate_merchandise_match_centroids(template_img, target_img)
 
-    template_img_rgb = cv2.cvtColor(template_color, cv2.COLOR_BGR2RGB)
-    target_img_rgb = cv2.cvtColor(target_color, cv2.COLOR_BGR2RGB)
-
-    sift = cv2.SIFT_create()
-    kp_template, des_template = sift.detectAndCompute(template_img_rgb, None)
-    kp_target, des_target = sift.detectAndCompute(target_img_rgb, None)
-
-    bf_matcher = cv2.BFMatcher(cv2.NORM_L2, crossCheck=True)
-
-    matches = bf_matcher.match(des_template, des_target)
-
-    matches = sorted(matches, key=lambda x: x.distance)
-
-    trainIdx_list = []
-    col_grid = W // args.grid_size + 1
-    row_grid = H // args.grid_size + 1
-    voting_grid = np.zeros((col_grid, row_grid))
-
-    for match in matches:
-        trainIdx_list.append([kp_target[match.trainIdx].pt[0], kp_target[match.trainIdx].pt[1]])
-        voting_grid[int(kp_target[match.trainIdx].pt[0] // args.grid_size)][
-            int(kp_target[match.trainIdx].pt[1] // args.grid_size)] += 1
-
-    sorted_kp = np.argsort(voting_grid, axis=None)
-    voting_above_threshold = np.argwhere(voting_grid >= args.voting_threshold)
-    kp_dic, merge_list = find_connected_components(voting_above_threshold)
-
-    detected_list = []
-
-    print(kp_dic)
-
-    for i in range(len(kp_dic)):
-        if len(kp_dic[i]) < args.cluster_threshold:
-            continue
-        clustered_pts = kp_dic[i]
-        cluster_center = np.mean(clustered_pts, axis=0)
-        detected_list.append(cluster_center)
-
-    detected_list = np.array(detected_list) + 0.5
-
+    print("Final List: ")
     print(detected_list)
 
     plt.plot(detected_list[:, 0] * args.grid_size, detected_list[:, 1] * args.grid_size, 'r*', label='centroids')
     plt.axis('equal')
     plt.legend(shadow=True)
 
-    plt.imshow(target_img_rgb)
+    plt.imshow(cv2.cvtColor(target_color, cv2.COLOR_BGR2RGB))
     plt.show()
