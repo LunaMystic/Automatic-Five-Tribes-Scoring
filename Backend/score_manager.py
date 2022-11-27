@@ -2,7 +2,7 @@ import cv2
 import resources
 from score_utils import ScoreSheet
 from matching import multiple_match
-from match_cards import calculate_merchandise_match_centroids
+from match_cards import merc_multiple_match
 
 
 def score(image_stream):
@@ -15,7 +15,7 @@ def score(image_stream):
 def score_helper(sheet, image):
     # Very boring detection of various merchandise
     for item in resources.ALL_MERCHANDISE:
-        current_merc = len(calculate_merchandise_match_centroids(item[0], image))
+        current_merc = len(merc_multiple_match(item[0], image))
         if current_merc:
             sheet.merManager.inventory[item[1]] = current_merc
             print("Detecting ", current_merc, " ", item[1], " in Image")

@@ -64,7 +64,7 @@ def find_connected_components(grid_list):
 
     return final_dic, merge_list
 
-def calculate_merchandise_match_centroids(template_img, target_img, 
+def merc_multiple_match(template_img, target_img, 
     grid_size=100, voting_threshold=2, cluster_threshold=3):
     """
     " Calculate centroids of all matches merchandises 
@@ -130,7 +130,7 @@ if __name__ == "__main__":
     template_img = cv2.cvtColor(template_color, cv2.COLOR_BGR2GRAY)
     target_img = cv2.cvtColor(target_color, cv2.COLOR_BGR2GRAY)
 
-    detected_list = calculate_merchandise_match_centroids(template_img, target_img)
+    detected_list = merc_multiple_match(template_img, target_img)
 
     print("Final List: ")
     print(detected_list)
