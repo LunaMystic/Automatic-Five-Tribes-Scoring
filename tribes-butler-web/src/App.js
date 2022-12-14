@@ -1,10 +1,12 @@
 import './App.css';
- 
+import PlayerDetail from './PlayerDetail';
+import ScoreSheet from './ScoreSheet';
 import React, { useState, useEffect, useRef } from 'react';
 import { Button, Space } from 'antd';
  
 export default function App() {
   const canvasRef = useRef();
+  const [playerDetailData, setPlayerDetailData] = useState([]);
   const [data, setData] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
  
@@ -68,7 +70,7 @@ export default function App() {
 
   return (
     <div>
-      <h1>Open up App.js to start working on your app!</h1>
+      {/* <h1>Open up App.js to start working on your app!</h1>
       <div>
         <canvas
           ref={canvasRef}
@@ -80,10 +82,11 @@ export default function App() {
         <input type="file" name="file" onChange={(e) => {
           setSelectedFile(e.target.files[0]);
         }}/>
-        <button onClick={() => fetchPlayerScoreResponse()}> SB </button>
         <Button type="primary" onClick={() => fetchPlayerScoreResponse()}>Primary Button</Button>
       </div>
-      <h1>{data==null ? null : data.score}</h1>
+      <h1>{data==null ? null : data.score}</h1> */}
+      <PlayerDetail updater={(newVal) => {setPlayerDetailData([...playerDetailData, newVal])}}/>
+      <ScoreSheet merc_score_arr={playerDetailData}/>
     </div>
   );
 }
