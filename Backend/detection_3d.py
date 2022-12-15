@@ -25,7 +25,7 @@ if __name__ == "__main__":
 
     region_size = int((standard_W / 6 + standard_H / 5)/2)
 
-    blur_kernel_size = 5
+    blur_kernel_size = 15
 
     sift = cv2.SIFT_create()
     target_color = cv2.imread(args.target_img_name)
